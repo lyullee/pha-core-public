@@ -1,0 +1,480 @@
+{
+  "schema_version": "pha.snapshot.v1",
+  "project_id": "PHA-DEMO",
+  "study_id": "STUDY-01",
+  "baseline_id": "BL-01",
+  "revision": 1,
+  "mode": "synthetic",
+  "change_reason": "Operational synthetic fixture; explicit demo mapping to PRISM storage/storage.out.",
+  "evidence": [
+    {
+      "id": "EVID-DESIGN",
+      "revision": 1,
+      "review": "DRAFT",
+      "original_name": "tank_overpressure.design.json",
+      "sha256": "b0c39ca1d0cf7fb4c479aba68f6095d858416bc3b992c1422ce75dd9a84f1512",
+      "section": "synthetic architecture fixture",
+      "source_kind": "synthetic"
+    }
+  ],
+  "assets": [
+    {
+      "id": "AST-TK01",
+      "revision": 1,
+      "review": "SYNTHETIC",
+      "evidence_ids": [],
+      "tag": "TK-01",
+      "asset_class": "process_equipment",
+      "asset_type": "storage_tank",
+      "parent_asset_id": null,
+      "prism_component_id": "storage"
+    },
+    {
+      "id": "AST-PCV01",
+      "revision": 1,
+      "review": "SYNTHETIC",
+      "evidence_ids": [],
+      "tag": "PCV-01",
+      "asset_class": "process_equipment",
+      "asset_type": "control_valve",
+      "parent_asset_id": null,
+      "prism_component_id": null
+    },
+    {
+      "id": "AST-PSV01",
+      "revision": 1,
+      "review": "SYNTHETIC",
+      "evidence_ids": [],
+      "tag": "PSV-01",
+      "asset_class": "process_equipment",
+      "asset_type": "pressure_safety_valve",
+      "parent_asset_id": null,
+      "prism_component_id": null
+    },
+    {
+      "id": "AST-PSVPATH01",
+      "revision": 1,
+      "review": "SYNTHETIC",
+      "evidence_ids": [],
+      "tag": "XV-PSV-01",
+      "asset_class": "process_equipment",
+      "asset_type": "relief_path_isolation_valve",
+      "parent_asset_id": null,
+      "prism_component_id": null
+    },
+    {
+      "id": "AST-PT01",
+      "revision": 1,
+      "review": "SYNTHETIC",
+      "evidence_ids": [],
+      "tag": "PT-01",
+      "asset_class": "instrument",
+      "asset_type": "pressure_transmitter",
+      "parent_asset_id": null,
+      "prism_component_id": null
+    },
+    {
+      "id": "AST-SIS01",
+      "revision": 1,
+      "review": "SYNTHETIC",
+      "evidence_ids": [],
+      "tag": "SIS-01",
+      "asset_class": "logic",
+      "asset_type": "logic_solver",
+      "parent_asset_id": null,
+      "prism_component_id": null
+    },
+    {
+      "id": "AST-XV01",
+      "revision": 1,
+      "review": "SYNTHETIC",
+      "evidence_ids": [],
+      "tag": "ESDV-01",
+      "asset_class": "process_equipment",
+      "asset_type": "shutdown_valve",
+      "parent_asset_id": null,
+      "prism_component_id": null
+    }
+  ],
+  "parameters": [],
+  "ports": [
+    {
+      "id": "PORT-TK-ACCIDENT",
+      "revision": 1,
+      "review": "SYNTHETIC",
+      "evidence_ids": [],
+      "asset_id": "AST-TK01",
+      "purpose": "accident_release",
+      "direction": "out",
+      "phase": "vapour",
+      "property_basis": "Hydrogen:CoolProp-HEOS:Hydrogen:native",
+      "prism_port_id": "storage.out"
+    }
+  ],
+  "connections": [],
+  "functional_links": [
+    {
+      "id": "LINK-MEASURES",
+      "revision": 1,
+      "review": "SYNTHETIC",
+      "evidence_ids": [],
+      "source_id": "AST-PT01",
+      "target_id": "AST-TK01",
+      "relation": "measures"
+    },
+    {
+      "id": "LINK-SIGNAL",
+      "revision": 1,
+      "review": "SYNTHETIC",
+      "evidence_ids": [],
+      "source_id": "AST-PT01",
+      "target_id": "AST-SIS01",
+      "relation": "signal_to"
+    },
+    {
+      "id": "LINK-COMMAND",
+      "revision": 1,
+      "review": "SYNTHETIC",
+      "evidence_ids": [],
+      "source_id": "AST-SIS01",
+      "target_id": "AST-XV01",
+      "relation": "commands"
+    }
+  ],
+  "operating_cases": [
+    {
+      "id": "OP-RECEIVING",
+      "revision": 1,
+      "review": "SYNTHETIC",
+      "evidence_ids": [],
+      "mode": "receiving",
+      "annual_exposure_basis": "Demand rate already includes calendar-year mode exposure; do not multiply again."
+    }
+  ],
+  "contexts": [
+    {
+      "id": "CTX-RANDOM-DEMAND",
+      "revision": 1,
+      "review": "SYNTHETIC",
+      "evidence_ids": [],
+      "measure": "demand_failure_probability",
+      "operating_case_id": "OP-RECEIVING",
+      "time_model": "uniform independent random demand, synthetic stationary assumptions",
+      "mission_duration_h": null,
+      "evaluation_time_h": null,
+      "independence": "EXPLICIT_COMMON_EVENTS",
+      "independence_basis": "Explicit synthetic assumption for the two PSV events and between PSV and SIF; not reviewed field evidence.",
+      "average_measure_model": "UNSPECIFIED"
+    }
+  ],
+  "data": [
+    {
+      "id": "DAT-PSV-MECHANICAL",
+      "revision": 1,
+      "review": "SYNTHETIC",
+      "evidence_ids": [],
+      "metric": "demand_failure_probability",
+      "value": 0.006,
+      "unit": "1",
+      "context_id": "CTX-RANDOM-DEMAND",
+      "source_kind": "synthetic",
+      "population_basis": "one declared function/demand",
+      "exposure_basis": "conditional on independent demand",
+      "failure_mode": "synthetic example",
+      "missing_reason": null
+    },
+    {
+      "id": "DAT-PSV-PATH",
+      "revision": 1,
+      "review": "SYNTHETIC",
+      "evidence_ids": [],
+      "metric": "demand_failure_probability",
+      "value": 0.004,
+      "unit": "1",
+      "context_id": "CTX-RANDOM-DEMAND",
+      "source_kind": "synthetic",
+      "population_basis": "one declared function/demand",
+      "exposure_basis": "conditional on independent demand",
+      "failure_mode": "synthetic example",
+      "missing_reason": null
+    },
+    {
+      "id": "DAT-LOC-TRANSITION",
+      "revision": 1,
+      "review": "SYNTHETIC",
+      "evidence_ids": [],
+      "metric": "conditional_probability",
+      "value": 0.2,
+      "unit": "1",
+      "context_id": "CTX-RANDOM-DEMAND",
+      "source_kind": "synthetic",
+      "population_basis": "one declared function/demand",
+      "exposure_basis": "conditional on independent demand",
+      "failure_mode": "synthetic example",
+      "missing_reason": null
+    },
+    {
+      "id": "DAT-DEMAND-RATE",
+      "revision": 1,
+      "review": "SYNTHETIC",
+      "evidence_ids": [],
+      "metric": "occurrence_rate",
+      "value": 0.1,
+      "unit": "year^-1",
+      "context_id": "CTX-RANDOM-DEMAND",
+      "source_kind": "synthetic",
+      "population_basis": "one system",
+      "exposure_basis": "calendar year, mode exposure already included",
+      "failure_mode": "overpressure demand",
+      "missing_reason": null
+    }
+  ],
+  "events": [
+    {
+      "id": "EV-PSV-MECHANICAL",
+      "revision": 1,
+      "review": "SYNTHETIC",
+      "evidence_ids": [],
+      "asset_id": "AST-PSV01",
+      "datum_id": "DAT-PSV-MECHANICAL",
+      "house_state": null,
+      "kind": "basic_failure"
+    },
+    {
+      "id": "EV-PSV-PATH-BLOCKED",
+      "revision": 1,
+      "review": "SYNTHETIC",
+      "evidence_ids": [],
+      "asset_id": "AST-PSVPATH01",
+      "datum_id": "DAT-PSV-PATH",
+      "house_state": null,
+      "kind": "basic_failure"
+    }
+  ],
+  "gates": [
+    {
+      "id": "GATE-PSV-UNAVAILABLE",
+      "revision": 1,
+      "review": "SYNTHETIC",
+      "evidence_ids": [],
+      "kind": "OR",
+      "inputs": [
+        "EV-PSV-MECHANICAL",
+        "EV-PSV-PATH-BLOCKED"
+      ],
+      "k": null
+    }
+  ],
+  "trees": [
+    {
+      "id": "FTA-PSV01",
+      "revision": 1,
+      "review": "SYNTHETIC",
+      "evidence_ids": [],
+      "top_id": "GATE-PSV-UNAVAILABLE",
+      "context_id": "CTX-RANDOM-DEMAND",
+      "cut_boundary": "protection_demand",
+      "quantified_function_ids": [
+        "IPL-PSV01"
+      ]
+    }
+  ],
+  "rates": [
+    {
+      "id": "RATE-OVERPRESSURE-DEMAND",
+      "revision": 1,
+      "review": "SYNTHETIC",
+      "evidence_ids": [],
+      "asset_id": "AST-PCV01",
+      "datum_id": "DAT-DEMAND-RATE",
+      "operating_case_id": "OP-RECEIVING",
+      "endpoint": "protection_demand",
+      "included_barrier_ids": [],
+      "included_transition_ids": [],
+      "conditioning": "already exposure-adjusted random overpressure demand"
+    }
+  ],
+  "ipls": [
+    {
+      "id": "IPL-PSV01",
+      "revision": 1,
+      "review": "SYNTHETIC",
+      "evidence_ids": [],
+      "asset_ids": [
+        "AST-PSV01",
+        "AST-PSVPATH01"
+      ],
+      "failure_source": {
+        "kind": "fta",
+        "id": "FTA-PSV01"
+      },
+      "effectiveness": "ASSUMED",
+      "timeliness": "ASSUMED",
+      "proof_testing": "ASSUMED",
+      "qualification_basis": "Explicit synthetic assumption only"
+    },
+    {
+      "id": "IPL-SIF01",
+      "revision": 1,
+      "review": "SYNTHETIC",
+      "evidence_ids": [],
+      "asset_ids": [
+        "AST-PT01",
+        "AST-SIS01",
+        "AST-XV01"
+      ],
+      "failure_source": {
+        "kind": "sif",
+        "id": "SIF-TK01"
+      },
+      "effectiveness": "ASSUMED",
+      "timeliness": "ASSUMED",
+      "proof_testing": "ASSUMED",
+      "qualification_basis": "Proposed synthetic protection"
+    }
+  ],
+  "independence": [
+    {
+      "id": "IND-TK01",
+      "revision": 1,
+      "review": "SYNTHETIC",
+      "evidence_ids": [],
+      "scenario_id": "SC-TK01-OVERPRESSURE-LOC",
+      "participant_ids": [
+        "RATE-OVERPRESSURE-DEMAND",
+        "IPL-PSV01",
+        "IPL-SIF01"
+      ],
+      "judgment": "ASSUMED",
+      "rationale": "Distinct independent demand and PSV/SIF failure mechanisms assumed only for synthetic demonstration"
+    }
+  ],
+  "transitions": [
+    {
+      "id": "TR-UNCONTROLLED-TO-LOC",
+      "revision": 1,
+      "review": "SYNTHETIC",
+      "evidence_ids": [],
+      "source_endpoint": "uncontrolled_process_state",
+      "target_endpoint": "loss_of_containment",
+      "probability_datum_id": "DAT-LOC-TRANSITION",
+      "conditioning": "all applicable protection functions failed",
+      "physical_model_ref": null
+    }
+  ],
+  "criteria": [
+    {
+      "id": "CRIT-SYNTHETIC-LOC",
+      "revision": 1,
+      "review": "SYNTHETIC",
+      "evidence_ids": [],
+      "endpoint": "loss_of_containment",
+      "value_per_year": 1e-06,
+      "scope": "SC-TK01-OVERPRESSURE-LOC",
+      "basis": "Synthetic organizational LOC target, not regulatory or individual risk"
+    }
+  ],
+  "sifs": [
+    {
+      "id": "SIF-TK01",
+      "revision": 1,
+      "review": "SYNTHETIC",
+      "evidence_ids": [],
+      "context_id": "CTX-RANDOM-DEMAND",
+      "blocks": [
+        {
+          "id": "EL-PT01",
+          "revision": 1,
+          "review": "SYNTHETIC",
+          "evidence_ids": [],
+          "asset_ids": [
+            "AST-PT01"
+          ],
+          "role": "sensor",
+          "architecture": "1oo1",
+          "lambda_du_per_h": 2e-07,
+          "lambda_dd_per_h": 2e-08,
+          "proof_interval_h": 8760.0,
+          "mttr_h": 8.0,
+          "proof_coverage": 1.0,
+          "beta_du": 0.0,
+          "redundant_model_assumptions": false,
+          "repair_policy": "degraded_until_repaired"
+        },
+        {
+          "id": "EL-SIS01",
+          "revision": 1,
+          "review": "SYNTHETIC",
+          "evidence_ids": [],
+          "asset_ids": [
+            "AST-SIS01"
+          ],
+          "role": "logic",
+          "architecture": "1oo1",
+          "lambda_du_per_h": 1e-07,
+          "lambda_dd_per_h": 1e-08,
+          "proof_interval_h": 8760.0,
+          "mttr_h": 8.0,
+          "proof_coverage": 1.0,
+          "beta_du": 0.0,
+          "redundant_model_assumptions": false,
+          "repair_policy": "degraded_until_repaired"
+        },
+        {
+          "id": "EL-XV01",
+          "revision": 1,
+          "review": "SYNTHETIC",
+          "evidence_ids": [],
+          "asset_ids": [
+            "AST-XV01"
+          ],
+          "role": "final_element",
+          "architecture": "1oo1",
+          "lambda_du_per_h": 8e-07,
+          "lambda_dd_per_h": 1e-07,
+          "proof_interval_h": 8760.0,
+          "mttr_h": 8.0,
+          "proof_coverage": 1.0,
+          "beta_du": 0.0,
+          "redundant_model_assumptions": false,
+          "repair_policy": "degraded_until_repaired"
+        }
+      ],
+      "demand_mode": "low",
+      "as_good_as_new": true,
+      "uniform_random_demand": true,
+      "cross_block_independence": "ASSUMED",
+      "detection_s": 1.0,
+      "logic_s": 0.1,
+      "final_action_s": 5.0,
+      "process_recovery_s": 0.0,
+      "process_safety_time_s": 20.0,
+      "architecture_review": "REVIEW_REQUIRED",
+      "systematic_review": "REVIEW_REQUIRED"
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "SC-TK01-OVERPRESSURE-LOC",
+      "revision": 1,
+      "review": "SYNTHETIC",
+      "evidence_ids": [],
+      "asset_id": "AST-TK01",
+      "operating_case_id": "OP-RECEIVING",
+      "deviation": "tank overpressure",
+      "initiating_rate_id": "RATE-OVERPRESSURE-DEMAND",
+      "criterion_id": "CRIT-SYNTHETIC-LOC",
+      "existing_ipl_ids": [
+        "IPL-PSV01"
+      ],
+      "proposed_ipl_ids": [
+        "IPL-SIF01"
+      ],
+      "post_barrier_endpoint": "uncontrolled_process_state",
+      "transition_ids": [
+        "TR-UNCONTROLLED-TO-LOC"
+      ],
+      "hazop_row_id": "HAZOP-DEMO-01"
+    }
+  ]
+}

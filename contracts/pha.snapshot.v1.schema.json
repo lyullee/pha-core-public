@@ -1,0 +1,2173 @@
+{
+  "$defs": {
+    "Asset": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 160,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_.:/-]+$",
+          "title": "Id",
+          "type": "string"
+        },
+        "revision": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Revision",
+          "type": "integer"
+        },
+        "review": {
+          "default": "DRAFT",
+          "enum": [
+            "DRAFT",
+            "SYNTHETIC",
+            "REVIEW_REQUIRED",
+            "REVIEWED",
+            "REJECTED"
+          ],
+          "title": "Review",
+          "type": "string"
+        },
+        "evidence_ids": {
+          "default": [],
+          "items": {
+            "maxLength": 160,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9_.:/-]+$",
+            "type": "string"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        },
+        "tag": {
+          "minLength": 1,
+          "title": "Tag",
+          "type": "string"
+        },
+        "asset_class": {
+          "enum": [
+            "process_equipment",
+            "instrument",
+            "logic",
+            "electrical",
+            "utility",
+            "support"
+          ],
+          "title": "Asset Class",
+          "type": "string"
+        },
+        "asset_type": {
+          "title": "Asset Type",
+          "type": "string"
+        },
+        "parent_asset_id": {
+          "anyOf": [
+            {
+              "maxLength": 160,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_.:/-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parent Asset Id"
+        },
+        "prism_component_id": {
+          "anyOf": [
+            {
+              "maxLength": 160,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_.:/-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Prism Component Id"
+        }
+      },
+      "required": [
+        "id",
+        "tag",
+        "asset_class",
+        "asset_type"
+      ],
+      "title": "Asset",
+      "type": "object"
+    },
+    "BasicEvent": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 160,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_.:/-]+$",
+          "title": "Id",
+          "type": "string"
+        },
+        "revision": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Revision",
+          "type": "integer"
+        },
+        "review": {
+          "default": "DRAFT",
+          "enum": [
+            "DRAFT",
+            "SYNTHETIC",
+            "REVIEW_REQUIRED",
+            "REVIEWED",
+            "REJECTED"
+          ],
+          "title": "Review",
+          "type": "string"
+        },
+        "evidence_ids": {
+          "default": [],
+          "items": {
+            "maxLength": 160,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9_.:/-]+$",
+            "type": "string"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        },
+        "asset_id": {
+          "anyOf": [
+            {
+              "maxLength": 160,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_.:/-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Asset Id"
+        },
+        "datum_id": {
+          "anyOf": [
+            {
+              "maxLength": 160,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_.:/-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Datum Id"
+        },
+        "house_state": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "House State"
+        },
+        "kind": {
+          "default": "basic_failure",
+          "enum": [
+            "basic_failure",
+            "external_event",
+            "house_event",
+            "undeveloped_event"
+          ],
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "BasicEvent",
+      "type": "object"
+    },
+    "Connection": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 160,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_.:/-]+$",
+          "title": "Id",
+          "type": "string"
+        },
+        "revision": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Revision",
+          "type": "integer"
+        },
+        "review": {
+          "default": "DRAFT",
+          "enum": [
+            "DRAFT",
+            "SYNTHETIC",
+            "REVIEW_REQUIRED",
+            "REVIEWED",
+            "REJECTED"
+          ],
+          "title": "Review",
+          "type": "string"
+        },
+        "evidence_ids": {
+          "default": [],
+          "items": {
+            "maxLength": 160,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9_.:/-]+$",
+            "type": "string"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        },
+        "source_port_id": {
+          "maxLength": 160,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_.:/-]+$",
+          "title": "Source Port Id",
+          "type": "string"
+        },
+        "target_port_id": {
+          "maxLength": 160,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_.:/-]+$",
+          "title": "Target Port Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "source_port_id",
+        "target_port_id"
+      ],
+      "title": "Connection",
+      "type": "object"
+    },
+    "Context": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 160,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_.:/-]+$",
+          "title": "Id",
+          "type": "string"
+        },
+        "revision": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Revision",
+          "type": "integer"
+        },
+        "review": {
+          "default": "DRAFT",
+          "enum": [
+            "DRAFT",
+            "SYNTHETIC",
+            "REVIEW_REQUIRED",
+            "REVIEWED",
+            "REJECTED"
+          ],
+          "title": "Review",
+          "type": "string"
+        },
+        "evidence_ids": {
+          "default": [],
+          "items": {
+            "maxLength": 160,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9_.:/-]+$",
+            "type": "string"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        },
+        "measure": {
+          "enum": [
+            "demand_failure_probability",
+            "point_unavailability",
+            "average_unavailability",
+            "mission_probability",
+            "conditional_probability"
+          ],
+          "title": "Measure",
+          "type": "string"
+        },
+        "operating_case_id": {
+          "maxLength": 160,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_.:/-]+$",
+          "title": "Operating Case Id",
+          "type": "string"
+        },
+        "time_model": {
+          "title": "Time Model",
+          "type": "string"
+        },
+        "mission_duration_h": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mission Duration H"
+        },
+        "evaluation_time_h": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Evaluation Time H"
+        },
+        "independence": {
+          "default": "UNKNOWN",
+          "enum": [
+            "UNKNOWN",
+            "INDEPENDENT",
+            "EXPLICIT_COMMON_EVENTS"
+          ],
+          "title": "Independence",
+          "type": "string"
+        },
+        "independence_basis": {
+          "title": "Independence Basis",
+          "type": "string"
+        },
+        "average_measure_model": {
+          "default": "UNSPECIFIED",
+          "enum": [
+            "UNSPECIFIED",
+            "independent_random_test_phases"
+          ],
+          "title": "Average Measure Model",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "measure",
+        "operating_case_id",
+        "time_model",
+        "independence_basis"
+      ],
+      "title": "Context",
+      "type": "object"
+    },
+    "Criterion": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 160,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_.:/-]+$",
+          "title": "Id",
+          "type": "string"
+        },
+        "revision": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Revision",
+          "type": "integer"
+        },
+        "review": {
+          "default": "DRAFT",
+          "enum": [
+            "DRAFT",
+            "SYNTHETIC",
+            "REVIEW_REQUIRED",
+            "REVIEWED",
+            "REJECTED"
+          ],
+          "title": "Review",
+          "type": "string"
+        },
+        "evidence_ids": {
+          "default": [],
+          "items": {
+            "maxLength": 160,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9_.:/-]+$",
+            "type": "string"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        },
+        "endpoint": {
+          "enum": [
+            "protection_demand",
+            "uncontrolled_process_state",
+            "loss_of_containment",
+            "consequence_outcome"
+          ],
+          "title": "Endpoint",
+          "type": "string"
+        },
+        "value_per_year": {
+          "exclusiveMinimum": 0,
+          "title": "Value Per Year",
+          "type": "number"
+        },
+        "scope": {
+          "title": "Scope",
+          "type": "string"
+        },
+        "basis": {
+          "title": "Basis",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "endpoint",
+        "value_per_year",
+        "scope",
+        "basis"
+      ],
+      "title": "Criterion",
+      "type": "object"
+    },
+    "Datum": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 160,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_.:/-]+$",
+          "title": "Id",
+          "type": "string"
+        },
+        "revision": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Revision",
+          "type": "integer"
+        },
+        "review": {
+          "default": "DRAFT",
+          "enum": [
+            "DRAFT",
+            "SYNTHETIC",
+            "REVIEW_REQUIRED",
+            "REVIEWED",
+            "REJECTED"
+          ],
+          "title": "Review",
+          "type": "string"
+        },
+        "evidence_ids": {
+          "default": [],
+          "items": {
+            "maxLength": 160,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9_.:/-]+$",
+            "type": "string"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        },
+        "metric": {
+          "enum": [
+            "occurrence_rate",
+            "failure_rate",
+            "demand_failure_probability",
+            "point_unavailability",
+            "average_unavailability",
+            "mission_probability",
+            "conditional_probability"
+          ],
+          "title": "Metric",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Value"
+        },
+        "unit": {
+          "enum": [
+            "year^-1",
+            "h^-1",
+            "1"
+          ],
+          "title": "Unit",
+          "type": "string"
+        },
+        "context_id": {
+          "maxLength": 160,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_.:/-]+$",
+          "title": "Context Id",
+          "type": "string"
+        },
+        "source_kind": {
+          "enum": [
+            "published",
+            "vendor",
+            "observed",
+            "derived",
+            "synthetic"
+          ],
+          "title": "Source Kind",
+          "type": "string"
+        },
+        "population_basis": {
+          "title": "Population Basis",
+          "type": "string"
+        },
+        "exposure_basis": {
+          "title": "Exposure Basis",
+          "type": "string"
+        },
+        "failure_mode": {
+          "title": "Failure Mode",
+          "type": "string"
+        },
+        "missing_reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Missing Reason"
+        }
+      },
+      "required": [
+        "id",
+        "metric",
+        "value",
+        "unit",
+        "context_id",
+        "source_kind",
+        "population_basis",
+        "exposure_basis",
+        "failure_mode"
+      ],
+      "title": "Datum",
+      "type": "object"
+    },
+    "Evidence": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 160,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_.:/-]+$",
+          "title": "Id",
+          "type": "string"
+        },
+        "revision": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Revision",
+          "type": "integer"
+        },
+        "review": {
+          "default": "DRAFT",
+          "enum": [
+            "DRAFT",
+            "SYNTHETIC",
+            "REVIEW_REQUIRED",
+            "REVIEWED",
+            "REJECTED"
+          ],
+          "title": "Review",
+          "type": "string"
+        },
+        "original_name": {
+          "title": "Original Name",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        },
+        "section": {
+          "title": "Section",
+          "type": "string"
+        },
+        "source_kind": {
+          "enum": [
+            "published",
+            "vendor",
+            "observed",
+            "derived",
+            "synthetic"
+          ],
+          "title": "Source Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "original_name",
+        "sha256",
+        "section",
+        "source_kind"
+      ],
+      "title": "Evidence",
+      "type": "object"
+    },
+    "FaultTree": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 160,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_.:/-]+$",
+          "title": "Id",
+          "type": "string"
+        },
+        "revision": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Revision",
+          "type": "integer"
+        },
+        "review": {
+          "default": "DRAFT",
+          "enum": [
+            "DRAFT",
+            "SYNTHETIC",
+            "REVIEW_REQUIRED",
+            "REVIEWED",
+            "REJECTED"
+          ],
+          "title": "Review",
+          "type": "string"
+        },
+        "evidence_ids": {
+          "default": [],
+          "items": {
+            "maxLength": 160,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9_.:/-]+$",
+            "type": "string"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        },
+        "top_id": {
+          "maxLength": 160,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_.:/-]+$",
+          "title": "Top Id",
+          "type": "string"
+        },
+        "context_id": {
+          "maxLength": 160,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_.:/-]+$",
+          "title": "Context Id",
+          "type": "string"
+        },
+        "cut_boundary": {
+          "enum": [
+            "protection_demand",
+            "uncontrolled_process_state",
+            "loss_of_containment",
+            "consequence_outcome"
+          ],
+          "title": "Cut Boundary",
+          "type": "string"
+        },
+        "quantified_function_ids": {
+          "default": [],
+          "items": {
+            "maxLength": 160,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9_.:/-]+$",
+            "type": "string"
+          },
+          "title": "Quantified Function Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "top_id",
+        "context_id",
+        "cut_boundary"
+      ],
+      "title": "FaultTree",
+      "type": "object"
+    },
+    "FunctionalLink": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 160,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_.:/-]+$",
+          "title": "Id",
+          "type": "string"
+        },
+        "revision": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Revision",
+          "type": "integer"
+        },
+        "review": {
+          "default": "DRAFT",
+          "enum": [
+            "DRAFT",
+            "SYNTHETIC",
+            "REVIEW_REQUIRED",
+            "REVIEWED",
+            "REJECTED"
+          ],
+          "title": "Review",
+          "type": "string"
+        },
+        "evidence_ids": {
+          "default": [],
+          "items": {
+            "maxLength": 160,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9_.:/-]+$",
+            "type": "string"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        },
+        "source_id": {
+          "maxLength": 160,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_.:/-]+$",
+          "title": "Source Id",
+          "type": "string"
+        },
+        "target_id": {
+          "maxLength": 160,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_.:/-]+$",
+          "title": "Target Id",
+          "type": "string"
+        },
+        "relation": {
+          "enum": [
+            "measures",
+            "signal_to",
+            "commands",
+            "power_supply",
+            "instrument_air",
+            "protects",
+            "shared_environment"
+          ],
+          "title": "Relation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "source_id",
+        "target_id",
+        "relation"
+      ],
+      "title": "FunctionalLink",
+      "type": "object"
+    },
+    "Gate": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 160,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_.:/-]+$",
+          "title": "Id",
+          "type": "string"
+        },
+        "revision": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Revision",
+          "type": "integer"
+        },
+        "review": {
+          "default": "DRAFT",
+          "enum": [
+            "DRAFT",
+            "SYNTHETIC",
+            "REVIEW_REQUIRED",
+            "REVIEWED",
+            "REJECTED"
+          ],
+          "title": "Review",
+          "type": "string"
+        },
+        "evidence_ids": {
+          "default": [],
+          "items": {
+            "maxLength": 160,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9_.:/-]+$",
+            "type": "string"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        },
+        "kind": {
+          "enum": [
+            "AND",
+            "OR",
+            "K_OUT_OF_N",
+            "TRANSFER"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "inputs": {
+          "items": {
+            "maxLength": 160,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9_.:/-]+$",
+            "type": "string"
+          },
+          "title": "Inputs",
+          "type": "array"
+        },
+        "k": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "K"
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "inputs"
+      ],
+      "title": "Gate",
+      "type": "object"
+    },
+    "IPL": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 160,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_.:/-]+$",
+          "title": "Id",
+          "type": "string"
+        },
+        "revision": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Revision",
+          "type": "integer"
+        },
+        "review": {
+          "default": "DRAFT",
+          "enum": [
+            "DRAFT",
+            "SYNTHETIC",
+            "REVIEW_REQUIRED",
+            "REVIEWED",
+            "REJECTED"
+          ],
+          "title": "Review",
+          "type": "string"
+        },
+        "evidence_ids": {
+          "default": [],
+          "items": {
+            "maxLength": 160,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9_.:/-]+$",
+            "type": "string"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        },
+        "asset_ids": {
+          "items": {
+            "maxLength": 160,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9_.:/-]+$",
+            "type": "string"
+          },
+          "title": "Asset Ids",
+          "type": "array"
+        },
+        "failure_source": {
+          "$ref": "#/$defs/ResultRef"
+        },
+        "effectiveness": {
+          "default": "UNKNOWN",
+          "enum": [
+            "UNKNOWN",
+            "ASSUMED",
+            "REVIEWED"
+          ],
+          "title": "Effectiveness",
+          "type": "string"
+        },
+        "timeliness": {
+          "default": "UNKNOWN",
+          "enum": [
+            "UNKNOWN",
+            "ASSUMED",
+            "REVIEWED"
+          ],
+          "title": "Timeliness",
+          "type": "string"
+        },
+        "proof_testing": {
+          "default": "UNKNOWN",
+          "enum": [
+            "UNKNOWN",
+            "ASSUMED",
+            "REVIEWED"
+          ],
+          "title": "Proof Testing",
+          "type": "string"
+        },
+        "qualification_basis": {
+          "title": "Qualification Basis",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "asset_ids",
+        "failure_source",
+        "qualification_basis"
+      ],
+      "title": "IPL",
+      "type": "object"
+    },
+    "Independence": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 160,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_.:/-]+$",
+          "title": "Id",
+          "type": "string"
+        },
+        "revision": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Revision",
+          "type": "integer"
+        },
+        "review": {
+          "default": "DRAFT",
+          "enum": [
+            "DRAFT",
+            "SYNTHETIC",
+            "REVIEW_REQUIRED",
+            "REVIEWED",
+            "REJECTED"
+          ],
+          "title": "Review",
+          "type": "string"
+        },
+        "evidence_ids": {
+          "default": [],
+          "items": {
+            "maxLength": 160,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9_.:/-]+$",
+            "type": "string"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        },
+        "scenario_id": {
+          "maxLength": 160,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_.:/-]+$",
+          "title": "Scenario Id",
+          "type": "string"
+        },
+        "participant_ids": {
+          "items": {
+            "maxLength": 160,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9_.:/-]+$",
+            "type": "string"
+          },
+          "title": "Participant Ids",
+          "type": "array"
+        },
+        "judgment": {
+          "enum": [
+            "UNKNOWN",
+            "DEPENDENT",
+            "ASSUMED",
+            "REVIEWED"
+          ],
+          "title": "Judgment",
+          "type": "string"
+        },
+        "rationale": {
+          "title": "Rationale",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "scenario_id",
+        "participant_ids",
+        "judgment",
+        "rationale"
+      ],
+      "title": "Independence",
+      "type": "object"
+    },
+    "OperatingCase": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 160,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_.:/-]+$",
+          "title": "Id",
+          "type": "string"
+        },
+        "revision": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Revision",
+          "type": "integer"
+        },
+        "review": {
+          "default": "DRAFT",
+          "enum": [
+            "DRAFT",
+            "SYNTHETIC",
+            "REVIEW_REQUIRED",
+            "REVIEWED",
+            "REJECTED"
+          ],
+          "title": "Review",
+          "type": "string"
+        },
+        "evidence_ids": {
+          "default": [],
+          "items": {
+            "maxLength": 160,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9_.:/-]+$",
+            "type": "string"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        },
+        "mode": {
+          "title": "Mode",
+          "type": "string"
+        },
+        "annual_exposure_basis": {
+          "title": "Annual Exposure Basis",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "mode",
+        "annual_exposure_basis"
+      ],
+      "title": "OperatingCase",
+      "type": "object"
+    },
+    "Parameter": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 160,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_.:/-]+$",
+          "title": "Id",
+          "type": "string"
+        },
+        "revision": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Revision",
+          "type": "integer"
+        },
+        "review": {
+          "default": "DRAFT",
+          "enum": [
+            "DRAFT",
+            "SYNTHETIC",
+            "REVIEW_REQUIRED",
+            "REVIEWED",
+            "REJECTED"
+          ],
+          "title": "Review",
+          "type": "string"
+        },
+        "evidence_ids": {
+          "default": [],
+          "items": {
+            "maxLength": 160,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9_.:/-]+$",
+            "type": "string"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        },
+        "asset_id": {
+          "maxLength": 160,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_.:/-]+$",
+          "title": "Asset Id",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "number"
+        },
+        "unit": {
+          "enum": [
+            "Pa_abs",
+            "K",
+            "m",
+            "m2",
+            "m3",
+            "kg",
+            "kg/s",
+            "s",
+            "1"
+          ],
+          "title": "Unit",
+          "type": "string"
+        },
+        "original_value": {
+          "title": "Original Value",
+          "type": "number"
+        },
+        "original_unit": {
+          "title": "Original Unit",
+          "type": "string"
+        },
+        "operating_case_id": {
+          "maxLength": 160,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_.:/-]+$",
+          "title": "Operating Case Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "asset_id",
+        "name",
+        "value",
+        "unit",
+        "original_value",
+        "original_unit",
+        "operating_case_id"
+      ],
+      "title": "Parameter",
+      "type": "object"
+    },
+    "Port": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 160,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_.:/-]+$",
+          "title": "Id",
+          "type": "string"
+        },
+        "revision": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Revision",
+          "type": "integer"
+        },
+        "review": {
+          "default": "DRAFT",
+          "enum": [
+            "DRAFT",
+            "SYNTHETIC",
+            "REVIEW_REQUIRED",
+            "REVIEWED",
+            "REJECTED"
+          ],
+          "title": "Review",
+          "type": "string"
+        },
+        "evidence_ids": {
+          "default": [],
+          "items": {
+            "maxLength": 160,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9_.:/-]+$",
+            "type": "string"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        },
+        "asset_id": {
+          "maxLength": 160,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_.:/-]+$",
+          "title": "Asset Id",
+          "type": "string"
+        },
+        "purpose": {
+          "enum": [
+            "normal_process",
+            "normal_vent",
+            "accident_release",
+            "relief_discharge"
+          ],
+          "title": "Purpose",
+          "type": "string"
+        },
+        "direction": {
+          "enum": [
+            "in",
+            "out",
+            "bidirectional"
+          ],
+          "title": "Direction",
+          "type": "string"
+        },
+        "phase": {
+          "enum": [
+            "liquid",
+            "vapour",
+            "two_phase",
+            "any"
+          ],
+          "title": "Phase",
+          "type": "string"
+        },
+        "property_basis": {
+          "title": "Property Basis",
+          "type": "string"
+        },
+        "prism_port_id": {
+          "anyOf": [
+            {
+              "maxLength": 160,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_.:/-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Prism Port Id"
+        }
+      },
+      "required": [
+        "id",
+        "asset_id",
+        "purpose",
+        "direction",
+        "phase",
+        "property_basis"
+      ],
+      "title": "Port",
+      "type": "object"
+    },
+    "Rate": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 160,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_.:/-]+$",
+          "title": "Id",
+          "type": "string"
+        },
+        "revision": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Revision",
+          "type": "integer"
+        },
+        "review": {
+          "default": "DRAFT",
+          "enum": [
+            "DRAFT",
+            "SYNTHETIC",
+            "REVIEW_REQUIRED",
+            "REVIEWED",
+            "REJECTED"
+          ],
+          "title": "Review",
+          "type": "string"
+        },
+        "evidence_ids": {
+          "default": [],
+          "items": {
+            "maxLength": 160,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9_.:/-]+$",
+            "type": "string"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        },
+        "asset_id": {
+          "maxLength": 160,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_.:/-]+$",
+          "title": "Asset Id",
+          "type": "string"
+        },
+        "datum_id": {
+          "maxLength": 160,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_.:/-]+$",
+          "title": "Datum Id",
+          "type": "string"
+        },
+        "operating_case_id": {
+          "maxLength": 160,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_.:/-]+$",
+          "title": "Operating Case Id",
+          "type": "string"
+        },
+        "endpoint": {
+          "enum": [
+            "protection_demand",
+            "uncontrolled_process_state",
+            "loss_of_containment",
+            "consequence_outcome"
+          ],
+          "title": "Endpoint",
+          "type": "string"
+        },
+        "included_barrier_ids": {
+          "default": [],
+          "items": {
+            "maxLength": 160,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9_.:/-]+$",
+            "type": "string"
+          },
+          "title": "Included Barrier Ids",
+          "type": "array"
+        },
+        "included_transition_ids": {
+          "default": [],
+          "items": {
+            "maxLength": 160,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9_.:/-]+$",
+            "type": "string"
+          },
+          "title": "Included Transition Ids",
+          "type": "array"
+        },
+        "conditioning": {
+          "title": "Conditioning",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "asset_id",
+        "datum_id",
+        "operating_case_id",
+        "endpoint",
+        "conditioning"
+      ],
+      "title": "Rate",
+      "type": "object"
+    },
+    "ResultRef": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "datum",
+            "fta",
+            "sif"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "id": {
+          "maxLength": 160,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_.:/-]+$",
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "id"
+      ],
+      "title": "ResultRef",
+      "type": "object"
+    },
+    "SIF": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 160,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_.:/-]+$",
+          "title": "Id",
+          "type": "string"
+        },
+        "revision": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Revision",
+          "type": "integer"
+        },
+        "review": {
+          "default": "DRAFT",
+          "enum": [
+            "DRAFT",
+            "SYNTHETIC",
+            "REVIEW_REQUIRED",
+            "REVIEWED",
+            "REJECTED"
+          ],
+          "title": "Review",
+          "type": "string"
+        },
+        "evidence_ids": {
+          "default": [],
+          "items": {
+            "maxLength": 160,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9_.:/-]+$",
+            "type": "string"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        },
+        "context_id": {
+          "maxLength": 160,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_.:/-]+$",
+          "title": "Context Id",
+          "type": "string"
+        },
+        "blocks": {
+          "items": {
+            "$ref": "#/$defs/SifBlock"
+          },
+          "title": "Blocks",
+          "type": "array"
+        },
+        "demand_mode": {
+          "default": "low",
+          "enum": [
+            "low",
+            "high",
+            "continuous"
+          ],
+          "title": "Demand Mode",
+          "type": "string"
+        },
+        "as_good_as_new": {
+          "default": true,
+          "title": "As Good As New",
+          "type": "boolean"
+        },
+        "uniform_random_demand": {
+          "default": true,
+          "title": "Uniform Random Demand",
+          "type": "boolean"
+        },
+        "cross_block_independence": {
+          "default": "UNKNOWN",
+          "enum": [
+            "UNKNOWN",
+            "ASSUMED",
+            "REVIEWED"
+          ],
+          "title": "Cross Block Independence",
+          "type": "string"
+        },
+        "detection_s": {
+          "minimum": 0,
+          "title": "Detection S",
+          "type": "number"
+        },
+        "logic_s": {
+          "minimum": 0,
+          "title": "Logic S",
+          "type": "number"
+        },
+        "final_action_s": {
+          "minimum": 0,
+          "title": "Final Action S",
+          "type": "number"
+        },
+        "process_recovery_s": {
+          "default": 0.0,
+          "minimum": 0,
+          "title": "Process Recovery S",
+          "type": "number"
+        },
+        "process_safety_time_s": {
+          "exclusiveMinimum": 0,
+          "title": "Process Safety Time S",
+          "type": "number"
+        },
+        "architecture_review": {
+          "default": "REVIEW_REQUIRED",
+          "enum": [
+            "REVIEW_REQUIRED",
+            "REVIEWED"
+          ],
+          "title": "Architecture Review",
+          "type": "string"
+        },
+        "systematic_review": {
+          "default": "REVIEW_REQUIRED",
+          "enum": [
+            "REVIEW_REQUIRED",
+            "REVIEWED"
+          ],
+          "title": "Systematic Review",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "context_id",
+        "blocks",
+        "detection_s",
+        "logic_s",
+        "final_action_s",
+        "process_safety_time_s"
+      ],
+      "title": "SIF",
+      "type": "object"
+    },
+    "Scenario": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 160,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_.:/-]+$",
+          "title": "Id",
+          "type": "string"
+        },
+        "revision": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Revision",
+          "type": "integer"
+        },
+        "review": {
+          "default": "DRAFT",
+          "enum": [
+            "DRAFT",
+            "SYNTHETIC",
+            "REVIEW_REQUIRED",
+            "REVIEWED",
+            "REJECTED"
+          ],
+          "title": "Review",
+          "type": "string"
+        },
+        "evidence_ids": {
+          "default": [],
+          "items": {
+            "maxLength": 160,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9_.:/-]+$",
+            "type": "string"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        },
+        "asset_id": {
+          "maxLength": 160,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_.:/-]+$",
+          "title": "Asset Id",
+          "type": "string"
+        },
+        "operating_case_id": {
+          "maxLength": 160,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_.:/-]+$",
+          "title": "Operating Case Id",
+          "type": "string"
+        },
+        "deviation": {
+          "title": "Deviation",
+          "type": "string"
+        },
+        "initiating_rate_id": {
+          "maxLength": 160,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_.:/-]+$",
+          "title": "Initiating Rate Id",
+          "type": "string"
+        },
+        "criterion_id": {
+          "maxLength": 160,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_.:/-]+$",
+          "title": "Criterion Id",
+          "type": "string"
+        },
+        "existing_ipl_ids": {
+          "default": [],
+          "items": {
+            "maxLength": 160,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9_.:/-]+$",
+            "type": "string"
+          },
+          "title": "Existing Ipl Ids",
+          "type": "array"
+        },
+        "proposed_ipl_ids": {
+          "default": [],
+          "items": {
+            "maxLength": 160,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9_.:/-]+$",
+            "type": "string"
+          },
+          "title": "Proposed Ipl Ids",
+          "type": "array"
+        },
+        "post_barrier_endpoint": {
+          "default": "uncontrolled_process_state",
+          "enum": [
+            "protection_demand",
+            "uncontrolled_process_state",
+            "loss_of_containment",
+            "consequence_outcome"
+          ],
+          "title": "Post Barrier Endpoint",
+          "type": "string"
+        },
+        "transition_ids": {
+          "default": [],
+          "items": {
+            "maxLength": 160,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9_.:/-]+$",
+            "type": "string"
+          },
+          "title": "Transition Ids",
+          "type": "array"
+        },
+        "hazop_row_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Hazop Row Id"
+        }
+      },
+      "required": [
+        "id",
+        "asset_id",
+        "operating_case_id",
+        "deviation",
+        "initiating_rate_id",
+        "criterion_id"
+      ],
+      "title": "Scenario",
+      "type": "object"
+    },
+    "SifBlock": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 160,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_.:/-]+$",
+          "title": "Id",
+          "type": "string"
+        },
+        "revision": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Revision",
+          "type": "integer"
+        },
+        "review": {
+          "default": "DRAFT",
+          "enum": [
+            "DRAFT",
+            "SYNTHETIC",
+            "REVIEW_REQUIRED",
+            "REVIEWED",
+            "REJECTED"
+          ],
+          "title": "Review",
+          "type": "string"
+        },
+        "evidence_ids": {
+          "default": [],
+          "items": {
+            "maxLength": 160,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9_.:/-]+$",
+            "type": "string"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        },
+        "asset_ids": {
+          "items": {
+            "maxLength": 160,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9_.:/-]+$",
+            "type": "string"
+          },
+          "title": "Asset Ids",
+          "type": "array"
+        },
+        "role": {
+          "enum": [
+            "sensor",
+            "logic",
+            "final_element"
+          ],
+          "title": "Role",
+          "type": "string"
+        },
+        "architecture": {
+          "default": "1oo1",
+          "enum": [
+            "1oo1",
+            "1oo2",
+            "2oo3"
+          ],
+          "title": "Architecture",
+          "type": "string"
+        },
+        "lambda_du_per_h": {
+          "minimum": 0,
+          "title": "Lambda Du Per H",
+          "type": "number"
+        },
+        "lambda_dd_per_h": {
+          "minimum": 0,
+          "title": "Lambda Dd Per H",
+          "type": "number"
+        },
+        "proof_interval_h": {
+          "exclusiveMinimum": 0,
+          "title": "Proof Interval H",
+          "type": "number"
+        },
+        "mttr_h": {
+          "minimum": 0,
+          "title": "Mttr H",
+          "type": "number"
+        },
+        "proof_coverage": {
+          "default": 1.0,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Proof Coverage",
+          "type": "number"
+        },
+        "beta_du": {
+          "default": 0.0,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Beta Du",
+          "type": "number"
+        },
+        "redundant_model_assumptions": {
+          "default": false,
+          "title": "Redundant Model Assumptions",
+          "type": "boolean"
+        },
+        "repair_policy": {
+          "const": "degraded_until_repaired",
+          "default": "degraded_until_repaired",
+          "title": "Repair Policy",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "asset_ids",
+        "role",
+        "lambda_du_per_h",
+        "lambda_dd_per_h",
+        "proof_interval_h",
+        "mttr_h"
+      ],
+      "title": "SifBlock",
+      "type": "object"
+    },
+    "Transition": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 160,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_.:/-]+$",
+          "title": "Id",
+          "type": "string"
+        },
+        "revision": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Revision",
+          "type": "integer"
+        },
+        "review": {
+          "default": "DRAFT",
+          "enum": [
+            "DRAFT",
+            "SYNTHETIC",
+            "REVIEW_REQUIRED",
+            "REVIEWED",
+            "REJECTED"
+          ],
+          "title": "Review",
+          "type": "string"
+        },
+        "evidence_ids": {
+          "default": [],
+          "items": {
+            "maxLength": 160,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9_.:/-]+$",
+            "type": "string"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        },
+        "source_endpoint": {
+          "enum": [
+            "protection_demand",
+            "uncontrolled_process_state",
+            "loss_of_containment",
+            "consequence_outcome"
+          ],
+          "title": "Source Endpoint",
+          "type": "string"
+        },
+        "target_endpoint": {
+          "enum": [
+            "protection_demand",
+            "uncontrolled_process_state",
+            "loss_of_containment",
+            "consequence_outcome"
+          ],
+          "title": "Target Endpoint",
+          "type": "string"
+        },
+        "probability_datum_id": {
+          "maxLength": 160,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9_.:/-]+$",
+          "title": "Probability Datum Id",
+          "type": "string"
+        },
+        "conditioning": {
+          "title": "Conditioning",
+          "type": "string"
+        },
+        "physical_model_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Physical Model Ref"
+        }
+      },
+      "required": [
+        "id",
+        "source_endpoint",
+        "target_endpoint",
+        "probability_datum_id",
+        "conditioning"
+      ],
+      "title": "Transition",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "pha.snapshot.v1",
+      "default": "pha.snapshot.v1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "project_id": {
+      "maxLength": 160,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9_.:/-]+$",
+      "title": "Project Id",
+      "type": "string"
+    },
+    "study_id": {
+      "maxLength": 160,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9_.:/-]+$",
+      "title": "Study Id",
+      "type": "string"
+    },
+    "baseline_id": {
+      "maxLength": 160,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9_.:/-]+$",
+      "title": "Baseline Id",
+      "type": "string"
+    },
+    "revision": {
+      "default": 1,
+      "minimum": 1,
+      "title": "Revision",
+      "type": "integer"
+    },
+    "mode": {
+      "default": "synthetic",
+      "enum": [
+        "synthetic",
+        "reviewed"
+      ],
+      "title": "Mode",
+      "type": "string"
+    },
+    "change_reason": {
+      "minLength": 1,
+      "title": "Change Reason",
+      "type": "string"
+    },
+    "evidence": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Evidence"
+      },
+      "title": "Evidence",
+      "type": "array"
+    },
+    "assets": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Asset"
+      },
+      "title": "Assets",
+      "type": "array"
+    },
+    "parameters": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Parameter"
+      },
+      "title": "Parameters",
+      "type": "array"
+    },
+    "ports": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Port"
+      },
+      "title": "Ports",
+      "type": "array"
+    },
+    "connections": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Connection"
+      },
+      "title": "Connections",
+      "type": "array"
+    },
+    "functional_links": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/FunctionalLink"
+      },
+      "title": "Functional Links",
+      "type": "array"
+    },
+    "operating_cases": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/OperatingCase"
+      },
+      "title": "Operating Cases",
+      "type": "array"
+    },
+    "contexts": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Context"
+      },
+      "title": "Contexts",
+      "type": "array"
+    },
+    "data": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Datum"
+      },
+      "title": "Data",
+      "type": "array"
+    },
+    "events": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/BasicEvent"
+      },
+      "title": "Events",
+      "type": "array"
+    },
+    "gates": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Gate"
+      },
+      "title": "Gates",
+      "type": "array"
+    },
+    "trees": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/FaultTree"
+      },
+      "title": "Trees",
+      "type": "array"
+    },
+    "rates": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Rate"
+      },
+      "title": "Rates",
+      "type": "array"
+    },
+    "ipls": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/IPL"
+      },
+      "title": "Ipls",
+      "type": "array"
+    },
+    "independence": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Independence"
+      },
+      "title": "Independence",
+      "type": "array"
+    },
+    "transitions": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Transition"
+      },
+      "title": "Transitions",
+      "type": "array"
+    },
+    "criteria": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Criterion"
+      },
+      "title": "Criteria",
+      "type": "array"
+    },
+    "sifs": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/SIF"
+      },
+      "title": "Sifs",
+      "type": "array"
+    },
+    "scenarios": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Scenario"
+      },
+      "title": "Scenarios",
+      "type": "array"
+    }
+  },
+  "required": [
+    "project_id",
+    "study_id",
+    "baseline_id",
+    "change_reason"
+  ],
+  "title": "StudySnapshot",
+  "type": "object"
+}

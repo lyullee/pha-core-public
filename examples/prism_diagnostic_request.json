@@ -1,0 +1,141 @@
+{
+  "component_id": "storage",
+  "source_input": null,
+  "available_mass_kg": 1.0,
+  "source_position_enu_m": [
+    0.0,
+    0.0,
+    1.0
+  ],
+  "weather": {
+    "wind_speed_m_s": 3.0,
+    "wind_from_bearing_deg": 270.0,
+    "measurement_height_m": 10.0,
+    "roughness_m": 0.03,
+    "stability": "D",
+    "relative_humidity": 0.5
+  },
+  "pool": null,
+  "ignition": {
+    "direct_probability": 0.1,
+    "delayed_probability_given_no_direct": 0.2,
+    "explosion_probability_given_delayed": 0.4,
+    "delayed_time_s": 1.0,
+    "burn_back_duration_s": 2.0,
+    "obstructed_energy_fraction": 0.08,
+    "provenance": "synthetic declared sensitivity; not center-derived ignition frequency",
+    "deflagration_only": true
+  },
+  "domain": {
+    "downwind_bounds_m": [
+      -2.0,
+      80.0
+    ],
+    "crosswind_bounds_m": [
+      -10.0,
+      10.0
+    ],
+    "height_bounds_m": [
+      0.0,
+      12.0
+    ],
+    "cell_size_m": 0.5
+  },
+  "evaluation_times_s": [
+    0.0,
+    0.1,
+    0.2,
+    0.37,
+    0.5,
+    1.0,
+    2.0,
+    3.0,
+    4.0,
+    5.0,
+    10.0,
+    20.0
+  ],
+  "radiative_fraction_range": [
+    0.06,
+    0.12
+  ],
+  "radiation_provenance": "LH2 spill radiation sensitivity consistent with existing TNO spill_fire range; not a universal jet calibration",
+  "annual_frequency_per_year": null,
+  "annual_frequency_provenance": null,
+  "occupancy_probability": 1.0,
+  "initiation_intensity_per_s": null,
+  "frequency_scope": "single_initiating_event_current_weather",
+  "dispersion_x_max_m": 100.0,
+  "transition_dx_m": 0.05,
+  "transition_x_max_m": 50.0,
+  "n_puff_steps": 80,
+  "resolved_release": {
+    "component_id": "storage",
+    "port_id": "storage.out",
+    "event_id": "SYNTHETIC-INTERFACE-PULSE",
+    "event_kind": "accidental_leak",
+    "upstream_service": "COLD_GH2",
+    "upstream_service_provenance": "Synthetic cold hydrogen pulse; no LH2 literature rate used",
+    "enthalpy_convention": "static_exit_enthalpy",
+    "property_basis": {
+      "fluid": "Hydrogen",
+      "backend": "CoolProp-HEOS",
+      "energy_reference": "CoolProp-HEOS:Hydrogen:native"
+    },
+    "provider_source_digest": "db7f21d0a19ba1d19c30fa4e98699c2c6b7e3feff1cbcad9af7c179c78c25686",
+    "provider_result_digest": "6593468f14e3b525b8253edbb4c2b6fe1ede0df642995480949da748d7174d21",
+    "provider_boundary_reference": "synthetic interface regression only; not calibrated equipment provider",
+    "input_origin": "synthetic",
+    "position_enu_m": [
+      0.0,
+      0.0,
+      1.0
+    ],
+    "direction_enu": [
+      1.0,
+      0.0,
+      0.0
+    ],
+    "ambient_pressure_pa_abs": 101325.0,
+    "ambient_temperature_k": 288.15,
+    "duration_s": 0.37,
+    "available_mass_kg": 1.0,
+    "cumulative_mass_out_kg": 0.016455126913345476,
+    "cumulative_static_enthalpy_out_j": 31288.79148000711,
+    "steps": [
+      {
+        "time_s": 0.0,
+        "mass_flow_kg_s": 0.03856670370315346,
+        "pressure_pa_abs": 101325.0,
+        "specific_enthalpy_j_kg": 1901461.5715076132,
+        "temperature_k": 150.0,
+        "density_kg_m3": 0.1636821742164634,
+        "effective_area_m2": 0.007853981633974483,
+        "velocity_m_s": 30.0,
+        "area_provenance": "synthetic diagnostic circular exit .1m; large pulse for nonzero harm regression",
+        "velocity_origin": "provider_resolved"
+      },
+      {
+        "time_s": 0.2,
+        "mass_flow_kg_s": 0.05142227160420461,
+        "pressure_pa_abs": 101325.0,
+        "specific_enthalpy_j_kg": 1901461.5715076132,
+        "temperature_k": 150.0,
+        "density_kg_m3": 0.1636821742164634,
+        "effective_area_m2": 0.007853981633974483,
+        "velocity_m_s": 40.0,
+        "area_provenance": "synthetic diagnostic circular exit .1m; large pulse for nonzero harm regression",
+        "velocity_origin": "provider_resolved"
+      }
+    ],
+    "failure_opening_diameter_m": 0.1,
+    "termination_provenance": "explicit synthetic .37s pulse; not predicted physical isolation"
+  },
+  "operating_mode": "receiving",
+  "hazop_scenario_id": "HAZOP-DEMO-01",
+  "release_termination": {
+    "basis": "synthetic_diagnostic_horizon",
+    "time_s": 0.37,
+    "provenance": "Synthetic interface pulse; field release duration unresolved"
+  }
+}

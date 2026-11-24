@@ -1,0 +1,7 @@
+# Versions used by the recorded local verification; PRISM dependencies are recorded separately.
+pydantic==2.14.1
+fastapi==0.115.6
+uvicorn==0.54.0
+pytest==8.4.2
+httpx==0.28.1
+openpyxl==3.1.5

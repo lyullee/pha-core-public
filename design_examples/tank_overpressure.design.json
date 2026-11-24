@@ -1,0 +1,433 @@
+{
+  "schema_version": "pha.design_fixture.v1",
+  "fixture_id": "tank-overpressure-architecture-v01",
+  "created_date_kst": "2026-10-22",
+  "document_kind": "implementation_design_fixture_not_runtime_request",
+  "scope": {
+    "facility_id": "FAC-SYNTHETIC-01",
+    "study_id": "STUDY-01",
+    "baseline_id": "BL-PROPOSED-01",
+    "operating_case_id": "OP-RECEIVING",
+    "scenario_id": "SC-TK01-OVERPRESSURE-LOC",
+    "cut_boundary": "protection_demand"
+  },
+  "provenance": {
+    "source_kind": "synthetic",
+    "evidence_status": "SYNTHETIC",
+    "all_numerical_values_are_assumptions": true,
+    "field_qualified": false,
+    "physical_validation_claim": false,
+    "complete_facility_qra_claim": false,
+    "note": "This file demonstrates data identities and arithmetic. It is not a supported PRISM input or field evaluation.",
+    "prism_source_reviewed_head": "884b0553341beb2d51d1d3c563f86982f378e160"
+  },
+  "assets": [
+    {
+      "id": "AST-TK01",
+      "tag": "TK-01",
+      "asset_class": "process_equipment",
+      "asset_type": "storage_tank",
+      "prism_component_id": "storage-tank-01"
+    },
+    {
+      "id": "AST-PCV01",
+      "tag": "PCV-01",
+      "asset_class": "process_equipment",
+      "asset_type": "control_valve",
+      "prism_component_id": null
+    },
+    {
+      "id": "AST-PSV01",
+      "tag": "PSV-01",
+      "asset_class": "process_equipment",
+      "asset_type": "pressure_safety_valve",
+      "prism_component_id": null
+    },
+    {
+      "id": "AST-PSVPATH01",
+      "tag": "XV-PSV-01",
+      "asset_class": "process_equipment",
+      "asset_type": "relief_path_isolation_valve",
+      "prism_component_id": null
+    },
+    {
+      "id": "AST-PT01",
+      "tag": "PT-01",
+      "asset_class": "instrument",
+      "asset_type": "pressure_transmitter",
+      "prism_component_id": null
+    },
+    {
+      "id": "AST-SIS01",
+      "tag": "SIS-01",
+      "asset_class": "logic",
+      "asset_type": "logic_solver",
+      "prism_component_id": null
+    },
+    {
+      "id": "AST-XV01",
+      "tag": "ESDV-01",
+      "asset_class": "process_equipment",
+      "asset_type": "shutdown_valve",
+      "prism_component_id": null
+    }
+  ],
+  "functional_links": [
+    {
+      "id": "LINK-PT-TK",
+      "relation": "measures",
+      "source_asset_id": "AST-PT01",
+      "target_asset_id": "AST-TK01"
+    },
+    {
+      "id": "LINK-PT-SIS",
+      "relation": "signal_to",
+      "source_asset_id": "AST-PT01",
+      "target_asset_id": "AST-SIS01"
+    },
+    {
+      "id": "LINK-SIS-XV",
+      "relation": "commands",
+      "source_asset_id": "AST-SIS01",
+      "target_asset_id": "AST-XV01"
+    }
+  ],
+  "operating_case": {
+    "id": "OP-RECEIVING",
+    "mode": "receiving",
+    "exposure_basis": "already_in_annual_initiating_rate",
+    "apply_additional_exposure_factor": false,
+    "annual_demand_count_assumption": 0.1
+  },
+  "evaluation_context": {
+    "id": "CTX-RANDOM-DEMAND",
+    "probability_measure": "conditional_failure_probability_at_independent_random_demand",
+    "time_model": "stationary_synthetic_demand_context",
+    "sif_pfd_conversion": "uniform_random_demand_first_order_small_probability_approximation",
+    "independence_assumption": "Explicit synthetic assumption for the two PSV events and between PSV and SIF; not reviewed field evidence.",
+    "field_independence_status": "UNKNOWN",
+    "synthetic_calculation_allowed": true
+  },
+  "initiating_rate": {
+    "id": "RATE-OVERPRESSURE-DEMAND",
+    "asset_id": "AST-PCV01",
+    "metric": "occurrence_rate",
+    "value": 0.1,
+    "unit": "year^-1",
+    "endpoint_semantics": "overpressure_protection_demand",
+    "operating_case_id": "OP-RECEIVING",
+    "included_barrier_ids": [],
+    "source_kind": "synthetic",
+    "note": "No leak frequency is inferred from this rate without the protection and physical transition model."
+  },
+  "quantitative_data": [
+    {
+      "id": "DAT-PSV-MECHANICAL",
+      "metric": "demand_failure_probability",
+      "value": 0.006,
+      "unit": "1",
+      "evaluation_context_id": "CTX-RANDOM-DEMAND",
+      "source_kind": "synthetic"
+    },
+    {
+      "id": "DAT-PSV-PATH",
+      "metric": "demand_failure_probability",
+      "value": 0.004,
+      "unit": "1",
+      "evaluation_context_id": "CTX-RANDOM-DEMAND",
+      "source_kind": "synthetic"
+    },
+    {
+      "id": "DAT-LOC-TRANSITION",
+      "metric": "conditional_probability",
+      "value": 0.2,
+      "unit": "1",
+      "conditioning": "PSV and SIF have both failed under the declared pressure demand",
+      "source_kind": "synthetic"
+    }
+  ],
+  "basic_events": [
+    {
+      "id": "EV-PSV-MECHANICAL",
+      "asset_id": "AST-PSV01",
+      "datum_id": "DAT-PSV-MECHANICAL",
+      "failure_mode": "fails_to_relieve_on_demand"
+    },
+    {
+      "id": "EV-PSV-PATH-BLOCKED",
+      "asset_id": "AST-PSVPATH01",
+      "datum_id": "DAT-PSV-PATH",
+      "failure_mode": "relief_path_blocked"
+    }
+  ],
+  "fault_tree": {
+    "id": "FTA-PSV01",
+    "top_event_id": "GATE-PSV-UNAVAILABLE",
+    "top_event_metric": "conditional_failure_probability",
+    "endpoint_semantics": "PSV_protection_function_unavailable_at_demand",
+    "evaluation_context_id": "CTX-RANDOM-DEMAND",
+    "gates": [
+      {
+        "id": "GATE-PSV-UNAVAILABLE",
+        "type": "OR",
+        "inputs": [
+          {
+            "kind": "event",
+            "ref": "EV-PSV-MECHANICAL"
+          },
+          {
+            "kind": "event",
+            "ref": "EV-PSV-PATH-BLOCKED"
+          }
+        ]
+      }
+    ],
+    "independence_basis": "synthetic_assumption_only",
+    "quantified_function_ids": [
+      "IPL-PSV01"
+    ],
+    "included_barrier_ids": []
+  },
+  "sif": {
+    "id": "SIF-TK01",
+    "function_type": "instrumented",
+    "configuration_origin": "proposed_synthetic",
+    "action": "detect high pressure and close ESDV-01",
+    "success_voting": "1oo1_per_functional_block",
+    "method_id": "handbook_simplified_low_demand_1oo1_first_order_sum_v1_candidate",
+    "method_validation_status": "DESIGN_CANDIDATE_NOT_IMPLEMENTED",
+    "proof_test": {
+      "interval_h": 8760.0,
+      "coverage": 1.0,
+      "restoration": "as_good_as_new_assumed"
+    },
+    "repair": {
+      "mttr_h": 8.0,
+      "diagnostic_behavior": "degraded_until_repaired_assumed"
+    },
+    "elements": [
+      {
+        "id": "EL-PT01",
+        "asset_id": "AST-PT01",
+        "role": "sensor",
+        "lambda_du_per_h": 2e-07,
+        "lambda_dd_per_h": 2e-08
+      },
+      {
+        "id": "EL-SIS01",
+        "asset_id": "AST-SIS01",
+        "role": "logic",
+        "lambda_du_per_h": 1e-07,
+        "lambda_dd_per_h": 1e-08
+      },
+      {
+        "id": "EL-XV01",
+        "asset_id": "AST-XV01",
+        "role": "final_element",
+        "lambda_du_per_h": 8e-07,
+        "lambda_dd_per_h": 1e-07
+      }
+    ],
+    "aggregate_method": "first_order_sum_of_1oo1_block_pfdavg_not_exact_joint_time_average",
+    "ccf": {
+      "model": "not_modelled",
+      "field_qualification_status": "REQUIRES_REVIEW"
+    },
+    "response_time": {
+      "detection_s": 1.0,
+      "logic_s": 0.1,
+      "final_action_s": 5.0,
+      "process_recovery_s": 0.0,
+      "process_safety_time_s": 20.0,
+      "source_kind": "synthetic"
+    },
+    "architecture_status": "REVIEW_REQUIRED",
+    "systematic_capability_status": "REVIEW_REQUIRED",
+    "overall_verification_status": "REVIEW_REQUIRED"
+  },
+  "safety_functions": [
+    {
+      "id": "IPL-PSV01",
+      "function_type": "relief",
+      "asset_ids": [
+        "AST-PSV01",
+        "AST-PSVPATH01"
+      ],
+      "failure_probability_result_ref": "FTA-PSV01"
+    },
+    {
+      "id": "SIF-TK01",
+      "function_type": "instrumented",
+      "asset_ids": [
+        "AST-PT01",
+        "AST-SIS01",
+        "AST-XV01"
+      ],
+      "failure_probability_result_ref": "SIF-TK01"
+    }
+  ],
+  "consequence_transition": {
+    "id": "TR-UNCONTROLLED-TO-LOC",
+    "source_endpoint": "uncontrolled_overpressure",
+    "target_endpoint": "loss_of_containment",
+    "probability_datum_id": "DAT-LOC-TRANSITION",
+    "physical_model_ref": null,
+    "field_qualification_status": "MISSING_DAMAGE_TRANSITION_EVIDENCE"
+  },
+  "lopa_case": {
+    "id": "LOPA-TK01",
+    "scenario_id": "SC-TK01-OVERPRESSURE-LOC",
+    "endpoint_metric": "loss_of_containment_frequency",
+    "initiating_rate_id": "RATE-OVERPRESSURE-DEMAND",
+    "existing_ipl_ids": [
+      "IPL-PSV01"
+    ],
+    "proposed_ipl_ids": [
+      "SIF-TK01"
+    ],
+    "consequence_transition_id": "TR-UNCONTROLLED-TO-LOC",
+    "criterion_id": "CRIT-SYNTHETIC-LOC",
+    "probability_credit_owner": "LOPA-TK01",
+    "upstream_probability_credit_applied": false,
+    "note": "The PSV FTA returns a function probability, not an initiating frequency or a LOC rate; multiply it exactly once."
+  },
+  "criterion": {
+    "id": "CRIT-SYNTHETIC-LOC",
+    "endpoint_metric": "loss_of_containment_frequency",
+    "value": 1e-06,
+    "unit": "year^-1",
+    "source_kind": "synthetic",
+    "not_a_regulatory_limit": true,
+    "not_an_individual_risk_criterion": true
+  },
+  "outcome_partition": {
+    "id": "PART-TK01",
+    "common_initiating_rate_id": "RATE-OVERPRESSURE-DEMAND",
+    "interpretation": "Availability-state partition for accounting, not an assertion of physical response order.",
+    "success_branches_are_not_assumed_zero_harm": true,
+    "rows": [
+      {
+        "id": "OUT-BOTH-AVAILABLE",
+        "psv_state": "available",
+        "sif_state": "available",
+        "loc_transition": "not_evaluated_in_this_branch",
+        "expected_probability": 0.98524432253184
+      },
+      {
+        "id": "OUT-PSV-AVAILABLE-SIF-FAILED",
+        "psv_state": "available",
+        "sif_state": "failed",
+        "loc_transition": "not_evaluated_in_this_branch",
+        "expected_probability": 0.00477967746816
+      },
+      {
+        "id": "OUT-PSV-FAILED-SIF-AVAILABLE",
+        "psv_state": "failed",
+        "sif_state": "available",
+        "loc_transition": "not_evaluated_in_this_branch",
+        "expected_probability": 0.00992783746816
+      },
+      {
+        "id": "OUT-BOTH-FAILED-NO-LOC",
+        "psv_state": "failed",
+        "sif_state": "failed",
+        "loc_transition": "no_loc",
+        "expected_probability": 3.8530025472e-05
+      },
+      {
+        "id": "OUT-LOC",
+        "psv_state": "failed",
+        "sif_state": "failed",
+        "loc_transition": "loc",
+        "expected_probability": 9.632506368e-06
+      }
+    ]
+  },
+  "probability_credit_plan": [
+    {
+      "id": "CREDIT-PSV",
+      "barrier_id": "IPL-PSV01",
+      "applied_in": "LOPA-TK01",
+      "factor_ref": "FTA-PSV01",
+      "apply_again_in_prism": false
+    },
+    {
+      "id": "CREDIT-SIF",
+      "barrier_id": "SIF-TK01",
+      "applied_in": "LOPA-TK01",
+      "factor_ref": "SIF-TK01",
+      "apply_again_in_prism": false
+    }
+  ],
+  "release_scenario_binding": {
+    "id": "BIND-LOC",
+    "scenario_id": "SC-TK01-OVERPRESSURE-LOC",
+    "outcome_id": "OUT-LOC",
+    "prism_component_id": "storage-tank-01",
+    "accident_port_ids": [
+      "tank-accident-out"
+    ],
+    "release_branch_id": null,
+    "opening_geometry_ref": null,
+    "provider_request_template_ref": null,
+    "provider_packet_ref": null,
+    "termination_evidence_ref": null,
+    "binding_status": "DESIGN_ID_ONLY_NOT_EXECUTABLE",
+    "note": "No opening size, duration, release mass, phase, or accident history is invented."
+  },
+  "prism_handoff_design": {
+    "contract_name": "pha.prism_handoff.v1_proposed",
+    "frequency_origin": "derived",
+    "frequency_binding_type": "DerivedFrequencyEvent_proposed",
+    "event_id": "DERIVED-LOC-TK01",
+    "endpoint_semantics": "loss_of_containment",
+    "expected_annual_frequency_per_year": 9.632506368e-07,
+    "already_included_barrier_ids": [
+      "IPL-PSV01",
+      "SIF-TK01"
+    ],
+    "already_included_transition_ids": [
+      "TR-UNCONTROLLED-TO-LOC"
+    ],
+    "occupancy_applied": false,
+    "ignition_applied": false,
+    "prism_runtime_packet_created": false,
+    "handoff_status": "BLOCKED",
+    "blocking_codes": [
+      "SYNTHETIC_EVIDENCE",
+      "MISSING_DAMAGE_TRANSITION",
+      "UNRESOLVED_DEPENDENCY",
+      "MISSING_PROVIDER_RELEASE",
+      "PRISM_EXTENSION_REQUIRED"
+    ],
+    "complete_facility_qra_claim": false,
+    "physical_validation_claim": false
+  },
+  "expected_results": {
+    "psv_failure_probability": 0.009976,
+    "psv_minimal_cutsets": [
+      [
+        "EV-PSV-MECHANICAL"
+      ],
+      [
+        "EV-PSV-PATH-BLOCKED"
+      ]
+    ],
+    "sif_element_pfdavg": {
+      "EL-PT01": 0.00087776,
+      "EL-SIS01": 0.00043888,
+      "EL-XV01": 0.0035112
+    },
+    "sif_pfdavg_first_order": 0.00482784,
+    "sif_achieved_rrf": 207.1319679194008,
+    "sif_numerical_sil_band_only": "SIL2",
+    "sif_overall_verification_status": "REVIEW_REQUIRED",
+    "baseline_loc_frequency_per_year": 0.00019952,
+    "required_additional_rrf": 199.52,
+    "single_new_sif_target_pfd": 0.005012028869286287,
+    "proposed_loc_frequency_per_year": 9.632506368e-07,
+    "numerical_target_status": "MEETS_NUMERIC_TARGET_UNDER_SYNTHETIC_ASSUMPTIONS",
+    "outcome_partition_probability_sum": 1.0,
+    "physical_release_and_facility_risk_status": "NOT_CALCULATED"
+  }
+}

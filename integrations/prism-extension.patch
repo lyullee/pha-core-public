@@ -1,0 +1,309 @@
+diff --git a/lh2-tno/src/lh2_tno/consequences.py b/lh2-tno/src/lh2_tno/consequences.py
+index 824d626c..7134a374 100644
+--- a/lh2-tno/src/lh2_tno/consequences.py
++++ b/lh2-tno/src/lh2_tno/consequences.py
+@@ -7,6 +7,7 @@ from typing import Literal
+ from pydantic import Field, model_validator
+ from .contracts import Contract, Name, Positive, Nonnegative, Fraction, Vector
+ from .frequency import FrequencyEvent
++from .derived_frequency import DerivedFrequencyEvent
+ from .equipment_boundary import ResolvedGasRelease, ResolvedGasReleaseSet, ResolvedLiquidRelease
+ from .state_snapshot import EquipmentStateSnapshot
+ from .two_sided_interaction import combine_endpoint_harm
+@@ -147,7 +148,7 @@ class ConsequenceRequest(Contract):
+     radiation_provenance: Name
+     annual_frequency_per_year: Nonnegative | None = None
+     annual_frequency_provenance: Name | None = None
+-    frequency_event: FrequencyEvent | None = None
++    frequency_event: FrequencyEvent | DerivedFrequencyEvent | None = None
+     release_termination: ReleaseTermination | None = None
+     source_operator: Literal['integrated_transient', 'inventory_liquid_jet', 'equipment_inventory_depletion', 'equipment_liquid_release', 'inventory_over_600s', 'equipment_inventory_over_600s', 'equipment_liquid_over_600s', 'equipment_pressure_equalization', 'equipment_two_sided_rupture', 'equipment_two_sided_rupture_endpoint', 'equipment_emergency_relief'] = 'integrated_transient'
+     # ``declared`` requires the source model to cover the requested horizon.
+@@ -438,6 +439,11 @@ class ConsequenceRequest(Contract):
+             raise ValueError('annual frequency provenance required')
+         event = self.frequency_event
+         if event is not None:
++            if isinstance(event, DerivedFrequencyEvent):
++                if release is None and release_set is None and liquid_release is None:
++                    raise ValueError('derived event requires a provider-resolved physical accident boundary')
++                if self.operating_mode != event.operating_mode or self.hazop_scenario_id != event.hazop_scenario_id:
++                    raise ValueError('derived event operating mode/HAZOP scenario mismatch')
+             if self.release_termination is None or self.release_termination.time_s != duration:
+                 raise ValueError('bound event requires explicit release-duration/termination basis; frequency does not justify cutting a release short')
+             if (
+diff --git a/lh2-tno/src/lh2_tno/pipeline.py b/lh2-tno/src/lh2_tno/pipeline.py
+index f00f1363..30511cfa 100644
+--- a/lh2-tno/src/lh2_tno/pipeline.py
++++ b/lh2-tno/src/lh2_tno/pipeline.py
+@@ -26,6 +26,10 @@ class ResearchPipeline:
+         from .consequences import evaluate_consequences
+         return evaluate_consequences(self,request)
+ 
++    def consequences_for_derived_event(self, request, event):
++        from .derived_frequency import bind_derived_event
++        return self.consequences(bind_derived_event(request, event))
++
+     def frequency_events(self, plan):
+         from .frequency import generate_events
+         return generate_events(self.facility, plan)
+diff --git a/lh2-tno/src/lh2_tno/derived_frequency.py b/lh2-tno/src/lh2_tno/derived_frequency.py
+new file mode 100644
+--- /dev/null
++++ b/lh2-tno/src/lh2_tno/derived_frequency.py
+@@ -0,0 +1,104 @@
++"""FTA/LOPA derived frequencies, separate from literature catalogues.
++
++This contract preserves arithmetic and input/run identities. It does not certify
++an independence assessment or fabricate a provider release. Existing consequence
++binding validates the physical release, duration, opening, service and ports.
++"""
++from __future__ import annotations
++
++import math
++from typing import Annotated, Literal
++
++from pydantic import Field, model_validator
++
++from .contracts import Contract, Fraction, Name, Nonnegative
++from .frequency import ReleaseDefinition
++
++Hash = Annotated[str, Field(pattern=r"^[a-f0-9]{64}$")]
++
++
++class ProbabilityCredit(Contract):
++    factor_id: Name
++    kind: Literal['barrier_failure', 'conditional_transition']
++    probability: Fraction
++    owner: Name
++    source_id: Name
++
++
++class DerivedFrequencyEvent(Contract):
++    id: Name
++    asset_id: Name
++    model_component_id: Name
++    port_ids: tuple[Name, ...]
++    basis: Literal['FTA_LOPA_DERIVED'] = 'FTA_LOPA_DERIVED'
++    profile: Literal['DERIVED_PROVIDER'] = 'DERIVED_PROVIDER'
++    statistic: Literal['computed_model'] = 'computed_model'
++    endpoint: Literal['loss_of_containment']
++    baseline_digest: Hash
++    analysis_digest: Hash
++    analysis_code_digest: Hash
++    prism_source_digest: Hash
++    analysis_run_id: Name
++    scenario_id: Name
++    operating_case_id: Name
++    source: Name
++    source_sha256: Hash
++    base_frequency_per_year: Nonnegative
++    annual_frequency_per_year: Nonnegative
++    credits: tuple[ProbabilityCredit, ...]
++    upstream_included_barrier_ids: tuple[Name, ...] = ()
++    upstream_included_transition_ids: tuple[Name, ...] = ()
++    included_barrier_ids: tuple[Name, ...]
++    included_transition_ids: tuple[Name, ...]
++    # One reviewed provider outlet allocation; item/length aggregation is not
++    # silently assigned to a single release point.
++    exposure_multiplier: Literal[1.0] = 1.0
++    location_weight: None = None
++    release: ReleaseDefinition
++    evidence_status: Literal['SYNTHETIC', 'REVIEWED_INPUTS']
++    operating_mode: Name
++    hazop_scenario_id: Name
++    limitations: tuple[str, ...]
++    physical_validation_claim: Literal[False] = False
++    complete_facility_qra_claim: Literal[False] = False
++
++    @model_validator(mode='after')
++    def arithmetic_and_identity(self):
++        expected_ports = 2 if self.release.mode == 'two_sided_rupture' else 1
++        if len(self.port_ids) != expected_ports or len(set(self.port_ids)) != len(self.port_ids):
++            raise ValueError('derived frequency requires exact unique provider outlet identities')
++        if self.release.mode in {'hole', 'two_sided_rupture'} and self.release.hole_diameter_m is None:
++            raise ValueError('derived hole/rupture requires a provider-owned failure opening')
++        if self.source_sha256 != self.baseline_digest:
++            raise ValueError('derived source must identify the immutable baseline')
++        keys = [(c.kind, c.factor_id) for c in self.credits]
++        if any(c.owner != self.scenario_id for c in self.credits):
++            raise ValueError('probability credits must identify this scenario as their application owner')
++        if len(keys) != len(set(keys)):
++            raise ValueError('duplicate probability credit')
++        barrier = tuple(c.factor_id for c in self.credits if c.kind == 'barrier_failure')
++        transitions = tuple(c.factor_id for c in self.credits if c.kind == 'conditional_transition')
++        if set(barrier) & set(self.upstream_included_barrier_ids) or set(transitions) & set(self.upstream_included_transition_ids):
++            raise ValueError('probability credit already included upstream')
++        for actual, expected in ((self.included_barrier_ids, self.upstream_included_barrier_ids + barrier),
++                                 (self.included_transition_ids, self.upstream_included_transition_ids + transitions)):
++            if len(actual) != len(set(actual)) or set(actual) != set(expected):
++                raise ValueError('included factor ledger disagrees with applied probability credits')
++        computed = self.base_frequency_per_year * math.prod(c.probability for c in self.credits)
++        if not math.isclose(computed, self.annual_frequency_per_year, rel_tol=1e-12, abs_tol=0):
++            raise ValueError('derived frequency does not match base rate and credited probabilities')
++        return self
++
++
++def bind_derived_event(request, event: DerivedFrequencyEvent):
++    """Use the existing physical binder; preserve a distinct derived event type."""
++    from .frequency import bind_event
++    if not isinstance(event, DerivedFrequencyEvent):
++        raise TypeError('DerivedFrequencyEvent required')
++    if request.frequency_event is not None or request.annual_frequency_per_year is not None or request.annual_frequency_provenance is not None:
++        raise ValueError('derived binding requires an unbound physical template')
++    if request.resolved_release is None and request.resolved_release_set is None and request.resolved_liquid_release is None:
++        raise ValueError('derived frequency requires a provider-resolved physical accident boundary')
++    if request.operating_mode != event.operating_mode or request.hazop_scenario_id != event.hazop_scenario_id:
++        raise ValueError('derived event operating mode/HAZOP scenario must match the physical template')
++    return bind_event(request, event)
+diff --git a/lh2-tno/src/lh2_tno/derived_campaign.py b/lh2-tno/src/lh2_tno/derived_campaign.py
+new file mode 100644
+--- /dev/null
++++ b/lh2-tno/src/lh2_tno/derived_campaign.py
+@@ -0,0 +1,87 @@
++"""Execute selected derived events with auditable, explicitly partial risk sums.
++
++Literature FrequencyPlan qualification and full-facility promotion stay separate.
++Only executed physical cases enter this diagnostic contribution ledger.
++"""
++import json
++import math
++
++from pydantic import model_validator
++
++from .campaign import _checked_harm
++from .contracts import Contract, Fraction, Name, Nonnegative, canonical_digest
++from .consequences import ConsequenceRequest
++from .derived_frequency import DerivedFrequencyEvent, bind_derived_event
++
++
++class DerivedCase(Contract):
++    id: Name
++    event: DerivedFrequencyEvent
++    annual_condition_id: Name
++    annual_condition_probability: Fraction
++    request: ConsequenceRequest
++    # Population is explicit; omission must not imply zero people.
++    persons_by_receptor: dict[Name, Nonnegative]
++
++    @model_validator(mode='after')
++    def unbound(self):
++        bind_derived_event(self.request, self.event)
++        return self
++
++
++def evaluate_derived_campaign(pipeline, cases, *, expected_source_digest):
++    cases = tuple(DerivedCase.model_validate_json(json.dumps(c, allow_nan=False)) for c in cases)
++    if not cases or len(cases) > 100 or len({c.id for c in cases}) != len(cases):
++        raise ValueError('campaign requires 1..100 unique cases')
++    pairs = [(c.event.id, c.annual_condition_id) for c in cases]
++    if len(set(pairs)) != len(pairs):
++        raise ValueError('duplicate event/annual condition would double count frequency')
++    events = {}
++    scenario_events = {}
++    for c in cases:
++        e = c.event
++        if e.prism_source_digest != expected_source_digest:
++            raise ValueError('derived campaign PRISM source digest changed')
++        if e.id in events and events[e.id] != e:
++            raise ValueError('same event id has inconsistent frequency/provenance')
++        events[e.id] = e
++        prior = scenario_events.setdefault((e.scenario_id, e.baseline_digest), e.id)
++        if prior != e.id:
++            raise ValueError('multiple events for one scenario require an explicit disjoint partition')
++    if len({e.baseline_digest for e in events.values()}) != 1:
++        raise ValueError('cannot aggregate alternative baselines as simultaneous events')
++    for e in events.values():
++        weight = sum(c.annual_condition_probability for c in cases if c.event.id == e.id)
++        if not math.isclose(weight, 1., rel_tol=0, abs_tol=1e-12):
++            raise ValueError('annual-condition probabilities must close to one for every selected event')
++    if len({c.request.radiative_fraction_range for c in cases}) != 1:
++        raise ValueError('radiation sensitivity endpoints must be shared across cases')
++    receptors = [r.id for r in pipeline.facility.receptors]
++    atoms, executed = [], []
++    for c in cases:
++        if set(c.persons_by_receptor) != set(receptors):
++            raise ValueError('explicit population required for every facility receptor')
++        request = bind_derived_event(c.request, c.event)
++        result = pipeline.consequences(request)
++        if result.get('frequency_event') != c.event.model_dump(mode='json'):
++            raise ValueError('derived event identity lost during consequence execution')
++        probabilities = request.ignition.probabilities()
++        harms = _checked_harm(result['data'], receptors, probabilities)
++        executed.append({'case_id': c.id, 'event_id': c.event.id, 'annual_condition_id': c.annual_condition_id,
++                         'annual_condition_probability': c.annual_condition_probability,
++                         'event_digest': c.event.digest(), 'request_digest': request.digest(),
++                         'result_digest': canonical_digest(result), 'result': result})
++        for branch, probability in probabilities.items():
++            weight = c.annual_condition_probability * probability * request.occupancy_probability
++            atoms.append({'event_id': c.event.id, 'annual_condition_id': c.annual_condition_id,
++                          'ignition_branch': branch, 'conditional_weight': weight,
++                          'initiating_frequency_per_year': c.event.annual_frequency_per_year,
++                          'receptor_harm_low_high': {rid: [harms[rid][i][branch] for i in range(2)] for rid in receptors},
++                          'expected_deaths_low_high': [sum(c.persons_by_receptor[rid] * harms[rid][i][branch] for rid in receptors) for i in range(2)]})
++    aggregate = pipeline.backend.run('facility_risk_aggregate', {'receptor_ids': receptors, 'atoms': atoms})
++    return {'schema_version': 'prism.derived_contribution.v1', 'status': 'DIAGNOSTIC_SELECTED_EVENT_CONTRIBUTION',
++            'facility_digest': pipeline.facility.digest(), 'events': [e.model_dump(mode='json') for e in events.values()],
++            'cases': executed, 'atoms': atoms, 'known_contribution': aggregate,
++            'physical_validation_claim': False, 'complete_facility_qra_claim': False,
++            'limitations': ['Selected derived final-outcome events only; successful protection discharge hazards and other LOCs may be missing.',
++                            'Full-facility evidence gates and literature campaign qualification are not promoted by this diagnostic sum.']}
+diff --git a/lh2-tno/tests/test_derived_frequency.py b/lh2-tno/tests/test_derived_frequency.py
+new file mode 100644
+--- /dev/null
++++ b/lh2-tno/tests/test_derived_frequency.py
+@@ -0,0 +1,55 @@
++"""Derived contracts must remain separate from published catalogue events."""
++import json
++from pathlib import Path
++
++import pytest
++
++from lh2_tno.consequences import ConsequenceRequest
++from lh2_tno.derived_frequency import DerivedFrequencyEvent, bind_derived_event
++from lh2_tno.frequency import FrequencyEvent
++
++
++def event_data():
++    return dict(id='derived:test', asset_id='AST-TANK', model_component_id='storage', port_ids=['storage.out'],
++                endpoint='loss_of_containment', baseline_digest='a'*64, analysis_digest='b'*64,
++                analysis_code_digest='c'*64, prism_source_digest='d'*64, analysis_run_id='run-1',
++                scenario_id='SC-1', operating_case_id='OP-1', source='synthetic FTA/LOPA test', source_sha256='a'*64,
++                base_frequency_per_year=.1, annual_frequency_per_year=.0002,
++                credits=[dict(factor_id='IPL-1',kind='barrier_failure',probability=.01,owner='SC-1',source_id='FTA-1'),
++                         dict(factor_id='TR-1',kind='conditional_transition',probability=.2,owner='SC-1',source_id='DAT-1')],
++                included_barrier_ids=['IPL-1'], included_transition_ids=['TR-1'],
++                release={'mode':'hole','hole_diameter_m':.01}, evidence_status='SYNTHETIC',
++                operating_mode='receiving',hazop_scenario_id='SC-1',limitations=['synthetic contract regression'])
++
++
++def test_derived_is_not_literature_event():
++    raw = event_data()
++    event = DerivedFrequencyEvent.model_validate_json(json.dumps(raw))
++    assert event.basis == 'FTA_LOPA_DERIVED'
++    with pytest.raises(ValueError):
++        FrequencyEvent.model_validate_json(event.model_dump_json())
++
++
++@pytest.mark.parametrize('mutation,match', [
++    (lambda d:d.update(annual_frequency_per_year=.01),'credited probabilities'),
++    (lambda d:d['credits'].append(d['credits'][0].copy()),'duplicate probability'),
++    (lambda d:d.update(upstream_included_barrier_ids=['IPL-1']),'already included'),
++    (lambda d:d.update(included_barrier_ids=[]),'factor ledger'),
++    (lambda d:d.update(port_ids=[]),'provider outlet'),
++    (lambda d:d.update(source_sha256='0'*64),'immutable baseline'),
++])
++def test_derived_contract_rejects_ambiguous_values(mutation,match):
++    raw=event_data()
++    mutation(raw)
++    with pytest.raises(ValueError,match=match):
++        DerivedFrequencyEvent.model_validate_json(json.dumps(raw))
++
++
++def test_derived_event_requires_provider_resolved_accident():
++    raw=json.loads((Path(__file__).parents[1]/'examples/consequence_request.json').read_text(encoding='utf-8'))
++    raw.update(annual_frequency_per_year=None,annual_frequency_provenance=None,initiation_intensity_per_s=None,
++               operating_mode='receiving',hazop_scenario_id='SC-1')
++    request=ConsequenceRequest.model_validate_json(json.dumps(raw))
++    event=DerivedFrequencyEvent.model_validate_json(json.dumps(event_data()))
++    with pytest.raises(ValueError,match='provider-resolved'):
++        bind_derived_event(request,event)
